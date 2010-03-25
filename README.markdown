@@ -32,8 +32,8 @@ If defining classes for robots, you can store them in separate files.
   
     if __name__ == '__main__':
       appengine_multi_robot_runner.compound_and_run([
-        ('foo', FooRobot()),
-        ('bar', BarRobot())
+        ('foo', FooRobot()), # foo.your_appname@appspot.com
+        ('bar', BarRobot())  # bar.your_appname@appspot.com
       ])
 
 ### Or, you can do
@@ -56,7 +56,6 @@ If defining classes for robots, you can store them in separate files.
       bar_robot.register_handler(events.BlipSubmitted, on_submitted_bar)
   
       appengine_multi_robot_runner.compound_and_run([
-        ('foo', foo_robot),
-        ('bar', bar_robot)
+        ('foo', foo_robot), # foo.your_appname@appspot.com
+        ('bar', bar_robot)  # bar.your_appname@appspot.com
       ])
-

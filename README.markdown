@@ -8,7 +8,7 @@ How to use
 
 ### Recommended way
 
-If defining a class for a robot, you can store them in separate files.
+If defining classes for robots, you can store them in separate files.
 
     from waveapi import robot
     from waveapi import events

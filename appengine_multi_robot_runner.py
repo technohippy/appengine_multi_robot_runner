@@ -37,8 +37,8 @@
 # 
 #   if __name__ == '__main__':
 #     appengine_multi_robot_runner.compound_and_run([
-#       ('foo', FooRobot()), # foo.your_appname@appspot.com
-#       ('bar', BarRobot())  # bar.your_appname@appspot.com
+#       ('foo', FooRobot()),
+#       ('bar', BarRobot())
 #     ])
 # 
 # Or you can do:
@@ -60,8 +60,8 @@
 #     bar_robot.register_handler(events.BlipSubmitted, on_submitted_bar)
 # 
 #     appengine_multi_robot_runner.compound_and_run([
-#       ('foo', foo_robot), # foo.your_appname@appspot.com
-#       ('bar', bar_robot)  # bar.your_appname@appspot.com
+#       ('foo', foo_robot),
+#       ('bar', bar_robot)
 #     ])
 
 import logging
@@ -104,9 +104,18 @@ class CompoundRobot(object):
     return self.associated_robot(host).get_verification_token_info()
 
 
-class GetHandler(appengine_robot_runner.GetHandler):
+class CapabilitiesHandler(appengine_robot_runner.CapabilitiesHandler):
   def __init__(self, method, contenttype):
-    appengine_robot_runner.GetHandler.__init__(self, method, contenttype)
+    appengine_robot_runner.CapabilitiesHandler.__init__(self, method, contenttype)
+
+  def get(self):
+    self.response.headers['Content-Type'] = self._contenttype
+    self.response.out.write(self._method(host=self.request.host))
+
+
+class ProfileHandler(appengine_robot_runner.ProfileHandler):
+  def __init__(self, method, contenttype):
+    appengine_robot_runner.ProfileHandler.__init__(self, method, contenttype)
 
   def get(self):
     self.response.headers['Content-Type'] = self._contenttype
@@ -162,10 +171,10 @@ def create_robot_webapp(robot, debug=False, extra_handlers=None):
   if not extra_handlers:
     extra_handlers = []
   return webapp.WSGIApplication([('/_wave/capabilities.xml',
-                                  lambda: GetHandler(robot.capabilities_xml,
+                                  lambda: CapabilitiesHandler(robot.capabilities_xml,
                                                      'application/xml')),
                                  ('/_wave/robot/profile',
-                                  lambda: GetHandler(robot.profile_json,
+                                  lambda: ProfileHandler(robot.profile_json,
                                                      'application/json')),
                                  ('/_wave/robot/jsonrpc',
                                   lambda: RobotEventHandler(robot)),
